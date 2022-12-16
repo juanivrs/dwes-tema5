@@ -1,4 +1,5 @@
 <?php
+
 /*********************************************************************************************************************
  * Este script muestra un formulario a través del cual se pueden buscar imágenes por el nombre y mostrarlas. Utiliza
  * el operador LIKE de SQL para buscar en el nombre de la imagen lo que llegue por $_GET['nombre'].
@@ -16,7 +17,15 @@
  * Tareas a realizar:
  * - TODO: tienes que realizar toda la lógica de este script
  */
+session_start();
+require 'utils/db.php';
+$usuario = $_SESSION && isset($_SESSION['usuario']) ? htmlspecialchars($_SESSION['usuario']) : null;
 
+$results = [];
+$textosan = $_GET && isset($_GET['nombre']) ? htmlentities(trim($_GET['nombre'])) : "";
+if (mb_strlen($textosan) > 0) {
+    $results = filter($textosan);
+}
 ?>
 
 <?php
@@ -30,15 +39,46 @@
  */
 ?>
 <h1>Galería de imágenes</h1>
-
+<?php
+if ($usuario == null) {
+    echo <<<END
+        <ul>
+            <li><a href="index.php">Home</a></li>
+            <li><strong>Filtrar imágenes</strong></li>
+            <li><a href="signup.php">Regístrate</a></li>
+            <li><a href="login.php">Iniciar Sesión</a></li>
+        </ul>
+    END;
+} else {
+    echo <<<END
+        <ul>
+            <li><a href='index.php'>Home</a></li>
+            <li><a href="add.php">Añadir imagen</a></li>
+            <li><strong>Filtrar imágenes</strong></li>
+            <li><a href="logout.php">Cerrar sesión ($usuario)</a></li>
+        </ul>
+    END;
+}
+?>
 <h2>Busca imágenes por filtro</h2>
 
 <form method="get">
     <p>
         <label for="nombre">Busca por nombre</label>
-        <input type="text" name="nombre" id="nombre">
+        <input type="text" name="nombre" id="nombre" value="<?php echo $textosan ?>">
     </p>
     <p>
         <input type="submit" value="Buscar">
     </p>
 </form>
+
+<?php
+foreach ($results as $result) {
+    echo <<<END
+        <h1>{$result['nombre']}</h1>
+        <div style='width:400px;height:400px;border:1px solid black;'>
+        <img style='width:100%; height:100%' src='{$result['ruta']}'/>
+        </div>
+    END;
+}
+?>

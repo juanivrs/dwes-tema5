@@ -34,12 +34,13 @@
 
 
 session_start();
+
 if (isset($_SESSION['usuario'])) {
     header('location:index.php');
     exit();
 }
 
-include 'utils/db.php';
+require 'utils/db.php';
 
 $error = false;
 $mostrarerror =
@@ -49,6 +50,8 @@ $mostrarerror =
         'pass8' => "",
         'passcoincide' => ""
     ];
+
+
 if ($_POST && isset($_POST['nombre']) &&  isset($_POST['clave']) && isset($_POST['repite_clave'])) {
     $mysqli = new mysqli("db", "dwes", "dwes", "dwes", 3306);
 
@@ -64,7 +67,8 @@ if ($_POST && isset($_POST['nombre']) &&  isset($_POST['clave']) && isset($_POST
         if (mb_strlen($passval) >= 8 && $passval === $respassval && $existeuser === true) {
 
             $password = password_hash($passval, PASSWORD_BCRYPT);
-            $resultado = $mysqli->query("insert into usuario (nombre, clave) values ('$nameval', '$password');");
+            // $resultado = $mysqli->query("insert into usuario (nombre, clave) values ('$nameval', '$password');");
+            $resultado = insertUser($nameval, $password);
             if ($resultado === false) {
                 echo <<<END
                     <div class='alert alert-danger'>
@@ -83,15 +87,24 @@ if ($_POST && isset($_POST['nombre']) &&  isset($_POST['clave']) && isset($_POST
     }
     $mysqli->close();
 }
+
+$nombrevalue = $_POST && isset($_POST['nombre']) ? htmlentities(trim($_POST['nombre'])) : "";
 ?>
 
-<?php if (!$_POST || $error == true) { ?>
-    <h1>Regístrate</h1>
 
+<?php if (!$_POST || $error == true) { ?>
+
+    <h1>Regístrate</h1>
+    <ul>
+        <li><a href='index.php'>Home</a></li>
+        <li><a href="filter.php">Filtrar imágenes</a></li>
+        <li><strong>Regístrate</strong></li>
+        <li><a href="login.php">Iniciar Sesión</a></li>
+    </ul>
     <form action="signup.php" method="post">
         <p>
             <label for="nombre">Nombre de usuario</label>
-            <input type="text" name="nombre" id="nombre">
+            <input type="text" name="nombre" id="nombre" value="<?php echo $nombrevalue ?>">
         </p>
         <?php
         echo "<p style='color:red'> {$mostrarerror['user0']} </p>";

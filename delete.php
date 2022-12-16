@@ -1,4 +1,5 @@
 <?php
+
 /**********************************************************************************************************************
  * Este script simplemente elimina la imagen de la base de datos y de la carpeta <imagen>
  *
@@ -25,6 +26,22 @@
 /*********************************************************************************************************************
  * Salida HTML
  */
+session_start();
+$usuario = $_SESSION && isset($_SESSION['usuario']) ? htmlspecialchars($_SESSION['usuario']) : null;
+if ($usuario == null) {
+    header('location:index.php');
+    exit();
+}
+require 'utils/db.php';
+
+if ($_GET && isset($_GET['id'])) {
+    $idval = htmlspecialchars(trim($_GET['id']));
+    $resultado = deleteImg($idval);
+    if ($resultado === false) {
+        header('location:index.php');
+        exit();
+    }
+}
 ?>
 <h1>Galería de imágenes</h1>
 

@@ -1,4 +1,5 @@
 <?php
+
 /**********************************************************************************************************************
  * Lógica del programa
  */
@@ -32,12 +33,12 @@ if ($usuario == null) {
         </ul>
     END;
 } else {
-    return <<<END
+    echo <<<END
         <ul>
             <li><strong>Home</strong></li>
             <li><a href="add.php">Añadir imagen</a></li>
             <li><a href="filter.php">Filtrar imágenes</a></li>
-            <li><a href="signup.php">Cerrar sesión ($usuario)</a></li>
+            <li><a href="logout.php">Cerrar sesión ($usuario)</a></li>
         </ul>
     END;
 }
@@ -49,11 +50,10 @@ if ($resultado->num_rows == 0) {
 }
 
 while (($fila = $resultado->fetch_assoc()) != null) {
-    echo <<<END
-        <figure>
-            <div>{$fila['nombre']} (subida por {$fila['usuario']})</div>
-            <img src="{$fila['ruta']}" width="200px">
-            <a href="delete.php?id={$fila['id']}">Borrar</a>
-        </figure>
-    END;
+
+    echo "<figure>";
+    echo  " <div>{$fila['nombre']} (subida por {$fila['usuario']})</div>";
+    echo     "<img src='{$fila["ruta"]}' width='200px'>";
+    echo   $usuario == null ? "" : "<a href=delete.php?id={$fila['id']}>Borrar</a>";
+    echo "</figure>";
 }

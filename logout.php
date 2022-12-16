@@ -1,4 +1,5 @@
 <?php
+
 /**********************************************************************************************************************
  * Este script tan solo tiene que destruir la sesión y volver a la página principal.
  * 
@@ -11,3 +12,15 @@
  * Tareas a realizar:
  * - TODO: tienes que realizar toda la lógica de este script
  */
+
+session_start();
+
+if (!isset($_SESSION['usuario'])) {
+    header('location:index.php');
+    exit();
+}
+if (isset($_SESSION['usuario'])) {
+    session_destroy();
+    header('location:index.php');
+    exit();
+}
